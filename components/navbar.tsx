@@ -32,6 +32,10 @@ const ScriptLoader = () => {
 				verify: { projectID: '6602a8abe0853d4e25ec3c4c' },
 				url: 'https://general-runtime.voiceflow.com',
 				versionID: 'production',
+				assistant: {
+					color: "green",
+					stylesheet: "chat.css"
+				}
 			});
 		};
 		script.src = 'https://cdn.voiceflow.com/widget/bundle.mjs';

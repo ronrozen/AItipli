@@ -7,6 +7,7 @@ declare global {
                     verify: { projectID: string };
                     url: string;
                     versionID: string;
+                    assistant: { color: string, stylesheet: string };
                 }) => void;
             };
         };
