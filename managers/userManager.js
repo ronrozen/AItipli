@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const endpoint = "https://college-chatbot-f9f3cef69f53.herokuapp.com/"
-//const endpoint = "http://localhost:3000/"
+//const endpoint = "https://college-chatbot-f9f3cef69f53.herokuapp.com/"
+const endpoint = "http://localhost:8090/"
 const headers = {
     'Content-Type': 'application/json',
     //'x-api-key': process.env.REACT_API_KEY
