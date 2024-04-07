@@ -57,17 +57,30 @@ export const Navbar = () => {
 	const { isAuthenticated: isAuthenticatedClient, logout } = useAuth();
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [showChat, setShowChat] = useState(false);
+	const [currentPage, setCurrentPage] = useState('')
 
 	useEffect(() => {
 		if (isAuthenticatedClient) {
 			setIsAuthenticated(true);
 		}
 
-		console.log("pathname", pathname)
-		if (pathname != '/') {
-			setShowChat(true)
-		} else {
-			setShowChat(false)
+		switch (pathname) {
+			case '/': {
+				setShowChat(false)
+			}
+				break;
+			case '/settings': {
+				setCurrentPage('settings')
+				setShowChat(true)
+			}
+				break;
+			case '/documents': {
+				setCurrentPage('documents')
+				setShowChat(true)
+			}
+				break;
+			default: setShowChat(false)
+				break
 		}
 
 	}, [isAuthenticatedClient, pathname]);
@@ -88,22 +101,27 @@ export const Navbar = () => {
 							<p className="font-bold text-inherit">TIPLI</p>
 						</NextLink>
 					</NavbarBrand>
-					{/*<ul className="hidden lg:flex gap-4 justify-start ml-2">
+					<ul className="hidden lg:flex gap-4 justify-start ml-2">
 						{siteConfig.navItems.map((item) => (
 							<NavbarItem key={item.href}>
 								<NextLink
-									className={clsx(
+									/*className={clsx(
 										linkStyles({ color: "foreground" }),
 										"data-[active=true]:text-primary data-[active=true]:font-medium"
 									)}
-									color="foreground"
+									color="foreground"*/
+									style={{
+										color: currentPage === item.label.toLowerCase()
+											? 'green'
+											: 'initial'
+									}}
 									href={item.href}
 								>
 									{item.label}
 								</NextLink>
 							</NavbarItem>
 						))}
-					</ul>*/}
+					</ul>
 				</NavbarContent>
 
 				<NavbarContent
@@ -146,19 +164,24 @@ export const Navbar = () => {
 				<NavbarMenuToggle />
 			</NavbarContent>*/}
 
-				{/*<NavbarMenu>
+				<NavbarMenu>
 					<div className="mx-4 mt-2 flex flex-col gap-2">
 						{siteConfig.navMenuItems.map((item, index) => (
 							<NavbarMenuItem key={`${item}-${index}`}>
 								<Link
-									color={
+									/*color={
 										index === 2
 											? "primary"
 											: index === siteConfig.navMenuItems.length - 1
 												? "danger"
 												: "foreground"
-									}
-									href="#"
+									}*/
+									style={{
+										color: currentPage === item.label.toLowerCase()
+											? 'green'
+											: 'initial'
+									}}
+									href={item.href}
 									size="lg"
 								>
 									{item.label}
@@ -166,7 +189,7 @@ export const Navbar = () => {
 							</NavbarMenuItem>
 						))}
 					</div>
-				</NavbarMenu>*/}
+				</NavbarMenu>
 			</NextUINavbar>
 			{
 				showChat && <ScriptLoader />

@@ -70,7 +70,7 @@ export default function Home() {
 
 	useEffect(() => {
 		if (isAuthenticatedClient) {
-			router.push('/documents')
+			router.push('/settings')
 		}
 
 		/*const urlParams = new URLSearchParams(window.location.search);
@@ -100,7 +100,8 @@ export default function Home() {
 			const authToken = await logIn(email, password)
 			console.log("authToken", authToken)
 			login(authToken, 1);
-			router.push('/documents')
+			//router.push('/settings')
+			window.location.href = '/settings'
 
 		} catch (e) {
 			setIsLoading(false)

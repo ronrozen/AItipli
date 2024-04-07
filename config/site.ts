@@ -4,8 +4,24 @@ export const siteConfig = {
 	name: "Tipli",
 	description: "AI Chatbots for college",
 	navItems: [
+		{
+			'label': 'Settings',
+			'href': '/settings'
+		},
+		{
+			'label': 'Documents',
+			'href': '/documents'
+		}
 	],
 	navMenuItems: [
+		{
+			'label': 'Settings',
+			'href': '/settings'
+		},
+		{
+			'label': 'Documents',
+			'href': '/documents'
+		}
 	],
 	links: {
 		github: "https://github.com/nextui-org/nextui",

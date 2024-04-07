@@ -15,6 +15,7 @@ import {
 interface DocumentRow {
 	id: number;
 	documentname: string;
+	isUploading: boolean;
 }
 
 interface FolderRow {
@@ -84,37 +85,47 @@ export default function DocumentsPage() {
 
 	// Function to handle file selection
 	const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-		const file = event.target.files ? event.target.files[0] : null;
-		if (file) {
-			try {
-				setIsLoading(true)
-				console.log("File selected:", file.name);
-				const uploadedDocument = await uploadDocument(file, selectedFolder.id)
-				if (uploadedDocument) {
-					// Assuming `uploadedDocument` contains the `id` and `documentname`
-					setDocuments(currentDocuments => [...currentDocuments, {
-						id: uploadedDocument.id, // Ensure this matches your actual response structure
-						documentname: uploadedDocument.documentname // Ensure this matches your actual response structure
-					}]);
-					setIsLoading(false)
-				}
-			} catch (e) {
-				setIsLoading(false)
-				const error = e as any;
-				if (error.response) {
-					console.log(error.response.data.response)
-					setErrorModalMessage(error.response.data.response)
-					setIsErrorModalOpen(true);
-				}
-			}
+		if (event.target.files && event.target.files.length > 0) {
+			const files = Array.from(event.target.files);
 
+			// Immediately add files to the state with isUploading = true
+			const newDocuments = files.map((file, index) => ({
+				id: -Math.random(), // Temporary negative ID; replace with real ID after upload
+				documentname: file.name,
+				isUploading: true
+			}));
+
+			setDocuments(currentDocuments => [...currentDocuments, ...newDocuments]);
+
+			// Upload files
+			files.forEach((file, index) => {
+				uploadDocument(file, selectedFolder?.id || 0)
+					.then(uploadedDocument => {
+						// Update the document to reflect it has been uploaded
+						setDocuments(currentDocuments =>
+							currentDocuments.map(doc =>
+								doc.documentname === file.name ? { ...uploadedDocument, isUploading: false } : doc
+							)
+						);
+					})
+					.catch(error => {
+						console.error("Error uploading file:", error);
+						// Optionally remove the document or indicate an error state
+					});
+			});
 		}
 	};
 
 	const renderDocumentsCell = (item: DocumentRow, columnKey: keyof DocumentRow | 'actions') => {
 		if (columnKey === "documentname") {
-			return <span>{item.documentname}</span>;
-		} else if (columnKey === "actions") {
+			return (
+				<div className="flex items-center">
+					<span>{item.documentname}</span>
+					{item.isUploading && <Spinner size="sm" className="ml-2" color="success" />}
+				</div>
+			);
+		}
+		else if (columnKey === "actions") {
 			return (
 				<div style={{ textAlign: 'right' }}>
 					<Button
@@ -205,11 +216,13 @@ export default function DocumentsPage() {
 							<Button color="success" style={{ color: "white" }} size="sm" onClick={handleUploadClick}>
 								Upload Document
 							</Button>
-							<input type="file" ref={fileInputRef} style={{ display: "none" }} onChange={async (file) => await handleFileChange(file)} />
+							{/*<input type="file" ref={fileInputRef} style={{ display: "none" }} onChange={async (file) => await handleFileChange(file)} />*/}
+							<input type="file" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileChange} multiple />
+
 						</>
 				}
 
-			</div>
+			</div >
 			<Spacer y={8} />
 
 			{
@@ -234,6 +247,7 @@ export default function DocumentsPage() {
 										setShowFolders(false)
 										setIsLoading(false)
 									}}
+									className="cursor-pointer"
 								>
 									{foldersColumns.map((column) => (
 										<TableCell key={column.key}>{renderFoldersCell(item, column.key as keyof FolderRow | "actions")}</TableCell>
@@ -277,6 +291,6 @@ export default function DocumentsPage() {
 				onClose={() => setIsErrorModalOpen(false)}
 				message={errorModalMessage}
 			/>
-		</div>
+		</div >
 	);
 }
