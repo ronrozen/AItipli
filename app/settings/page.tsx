@@ -31,6 +31,8 @@ export default function SettingsPage() {
     const [frequencyPenalty, setFrequencyPenalty] = useState(0.0);
     const [presencePenalty, setPresencePenalty] = useState(0.0);
     const [temperature, setTemperature] = useState(0.0);
+    const [matchThreshold, setMatchThreshold] = useState(0.0);
+    const [matchCount, setMatchCount] = useState(0.0);
 
     // Simulate fetching documents from an API
     useEffect(() => {
@@ -46,6 +48,8 @@ export default function SettingsPage() {
                 setPresencePenalty(result.presence_penalty)
                 setTemperature(result.temperature)
                 setOpenAIKey(result.open_ai_key)
+                setMatchThreshold(result.match_threshold)
+                setMatchCount(result.match_count)
                 setIsLoading(false)
             } catch (e) {
                 setIsLoading(false)
@@ -82,6 +86,8 @@ export default function SettingsPage() {
                         setChatbotId(result[0].id)
                         setModel(result[0].model)
                         setPrompt(result[0].prompt)
+                        setMatchThreshold(result[0].match_threshold)
+                        setMatchCount(result[0].match_count)
                         setIsLoading(false)
                     }}>
                         New Chatbot
@@ -199,6 +205,45 @@ export default function SettingsPage() {
                             />
 
                         </div>
+                        <Spacer y={8} />
+                        <p className="text-md">Knowledge Base</p>
+                        <Spacer y={4} />
+                        <div className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4">
+                            <Input
+                                value={matchThreshold?.toString()}
+                                onChange={e => {
+                                    const newValue = parseFloat(e.target.value);
+                                    if (!isNaN(newValue)) {
+                                        setMatchThreshold(newValue);
+                                    } else {
+                                        setMatchThreshold(0);
+                                    }
+                                }}
+                                fullWidth
+                                label="Match Threshold"
+                                type="number"
+                                size='sm'
+                                radius='lg'
+                                variant="bordered"
+                            />
+                            <Input
+                                value={matchCount?.toString()}
+                                onChange={e => {
+                                    const newValue = parseFloat(e.target.value);
+                                    if (!isNaN(newValue)) {
+                                        setMatchCount(newValue);
+                                    } else {
+                                        setMatchCount(0);
+                                    }
+                                }}
+                                fullWidth
+                                label="Match Count"
+                                type="number"
+                                size='sm'
+                                radius='lg'
+                                variant="bordered"
+                            />
+                        </div>
                     </CardBody>
                     <Spacer y={8} />
                     <Divider />
@@ -211,7 +256,7 @@ export default function SettingsPage() {
                             onClick={async () => {
                                 try {
                                     setIsLoading(true)
-                                    await updateChatbot(model, prompt, frequencyPenalty, presencePenalty, temperature, openAIKey)
+                                    await updateChatbot(model, prompt, frequencyPenalty, presencePenalty, temperature, openAIKey, matchThreshold, matchCount)
                                     setIsLoading(false)
                                 } catch (e) {
                                     console.log(e)
