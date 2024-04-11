@@ -12,7 +12,7 @@ import { useAuth } from './auth-context';
 //import SuccessModal from "@/components/modals/successModal";
 import ErrorModal from "@/app/modals/errorModal";
 
-import { logIn } from '@/managers/userManager'
+import { logIn, getUser } from '@/managers/userManager'
 
 const customSliderStyles = `
   .slick-dots li button:before {
@@ -69,17 +69,16 @@ export default function Home() {
 	};
 
 	useEffect(() => {
-		if (isAuthenticatedClient) {
-			router.push('/settings')
-		}
-
-		/*const urlParams = new URLSearchParams(window.location.search);
-		const verifyToken = urlParams.get('verifyToken');
 		const fetchData = async () => {
 			try {
-				await activateAccount(verifyToken)
-				setSuccessModalMessage("Email verified! Now you can login to your account.")
-				setIsSuccessModalOpen(true)
+				if (isAuthenticatedClient) {
+					const user = await getUser()
+					if (user.role == 'admin') {
+						window.location.href = '/colleges'
+					} else {
+						window.location.href = '/settings'
+					}
+				}
 			} catch (e) {
 				const error = e as any;
 				if (error.response) {
@@ -88,9 +87,7 @@ export default function Home() {
 			}
 		}
 
-		if (verifyToken) {
-			fetchData()
-		}*/
+		fetchData()
 
 	}, []);
 
@@ -100,8 +97,14 @@ export default function Home() {
 			const authToken = await logIn(email, password)
 			console.log("authToken", authToken)
 			login(authToken, 1);
-			//router.push('/settings')
-			window.location.href = '/settings'
+
+			const user = await getUser()
+			console.log("user", user)
+			if (user.role == 'admin') {
+				window.location.href = '/colleges'
+			} else {
+				window.location.href = '/settings'
+			}
 
 		} catch (e) {
 			setIsLoading(false)
