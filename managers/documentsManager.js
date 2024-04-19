@@ -74,3 +74,14 @@ export async function removeDocument(documentName) {
         return response.data;
     }
 }
+
+export async function scrapeWebsite(url, folder_id) {
+    console.log(headers)
+    let response = await axios.post(endpoint + "scrape_url", {
+        url, folder_id
+    }, { headers: headers });
+
+    if (response) {
+        return response.data.response;
+    }
+}

@@ -1,4 +1,4 @@
-export default function DocumentsLayout({
+export default function KnowledgeLayout({
 	children,
 }: {
 	children: React.ReactNode;

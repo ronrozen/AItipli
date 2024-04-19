@@ -17,6 +17,21 @@ const models = [
     }
 ]
 
+const knowledge_type = [
+    {
+        value: 'doc',
+        label: 'Only documents'
+    },
+    {
+        value: 'web',
+        label: 'Only websites'
+    },
+    {
+        value: 'both',
+        label: 'Documents and websites'
+    }
+]
+
 export default function SettingsPage() {
     const router = useRouter()
     const { isAuthenticated: isAuthenticatedClient } = useAuth();
@@ -28,6 +43,7 @@ export default function SettingsPage() {
     const [openAIKey, setOpenAIKey] = useState('');
     const [model, setModel] = useState('');
     const [prompt, setPrompt] = useState('');
+    const [knowledgeType, setKnowledgeType] = useState('');
     const [frequencyPenalty, setFrequencyPenalty] = useState(0.0);
     const [presencePenalty, setPresencePenalty] = useState(0.0);
     const [temperature, setTemperature] = useState(0.0);
@@ -50,6 +66,7 @@ export default function SettingsPage() {
                 setOpenAIKey(result.open_ai_key)
                 setMatchThreshold(result.match_threshold)
                 setMatchCount(result.match_count)
+                setKnowledgeType(result.doc_type)
                 setIsLoading(false)
             } catch (e) {
                 setIsLoading(false)
@@ -209,6 +226,26 @@ export default function SettingsPage() {
                         <p className="text-md">Knowledge Base</p>
                         <Spacer y={4} />
                         <div className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4">
+                            <Select
+                                isRequired
+                                size="sm"
+                                label="Knowledge Type"
+                                placeholder="Select knowledge type"
+                                defaultSelectedKeys={[knowledgeType]}
+                                onChange={(e) => {
+                                    console.log(e.target.value)
+                                    setKnowledgeType(e.target.value)
+                                }}
+                            >
+                                {knowledge_type.map((kb_type) => (
+                                    <SelectItem key={kb_type.value} value={kb_type.value}>
+                                        {kb_type.label}
+                                    </SelectItem>
+                                ))}
+                            </Select>
+                        </div>
+                        <Spacer y={4} />
+                        <div className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4">
                             <Input
                                 value={matchThreshold?.toString()}
                                 onChange={e => {
@@ -256,7 +293,7 @@ export default function SettingsPage() {
                             onClick={async () => {
                                 try {
                                     setIsLoading(true)
-                                    await updateChatbot(model, prompt, frequencyPenalty, presencePenalty, temperature, openAIKey, matchThreshold, matchCount)
+                                    await updateChatbot(model, prompt, frequencyPenalty, presencePenalty, temperature, openAIKey, matchThreshold, matchCount, knowledgeType)
                                     setIsLoading(false)
                                 } catch (e) {
                                     console.log(e)

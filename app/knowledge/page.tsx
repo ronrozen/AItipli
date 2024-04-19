@@ -2,9 +2,11 @@
 
 import React, { useRef, useState, useEffect } from "react";
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, Spinner, Spacer, Button, Breadcrumbs, BreadcrumbItem } from "@nextui-org/react";
-import { retrieveDocuments, uploadDocument, removeDocument, retrieveFolders, newFolder, removeFolder } from "@/managers/documentsManager"
+import { retrieveDocuments, uploadDocument, removeDocument, retrieveFolders, newFolder, removeFolder, scrapeWebsite } from "@/managers/documentsManager"
 import { useAuth } from '@/app/auth-context';
 import { useRouter } from 'next/navigation';
+
+import WebsiteModal from "../modals/websiteModal";
 import ErrorModal from "@/app/modals/errorModal";
 import FolderModal from "../modals/folderModal";
 
@@ -38,7 +40,7 @@ const foldersColumns: Column[] = [
 	{ key: "actions", name: "" }
 ];
 
-export default function DocumentsPage() {
+export default function KnowledgePage() {
 	const router = useRouter()
 	const { isAuthenticated: isAuthenticatedClient } = useAuth();
 	const fileInputRef = useRef<HTMLInputElement>(null);
@@ -50,6 +52,7 @@ export default function DocumentsPage() {
 	const [errorModalMessage, setErrorModalMessage] = useState('');
 	const [showFolders, setShowFolders] = useState(true);
 	const [selectedFolder, setSelectedFolder] = useState<FolderRow>();
+	const [isWebsiteModalOpen, setIsWebsiteModalOpen] = useState(false);
 
 	// Simulate fetching documents from an API
 	useEffect(() => {
@@ -192,7 +195,7 @@ export default function DocumentsPage() {
 					{
 						!showFolders &&
 						<>
-							<h1 className="text-3xl font-bold">All Documents</h1>
+							<h1 className="text-3xl font-bold">Your Knowledge Base</h1>
 							<Breadcrumbs className="mt-4">
 								<BreadcrumbItem onClick={() => {
 									setSelectedFolder(undefined)
@@ -213,11 +216,20 @@ export default function DocumentsPage() {
 						</>
 						:
 						<>
-							<Button color="success" style={{ color: "white" }} size="sm" onClick={handleUploadClick}>
-								Upload Document
-							</Button>
-							{/*<input type="file" ref={fileInputRef} style={{ display: "none" }} onChange={async (file) => await handleFileChange(file)} />*/}
-							<input type="file" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileChange} multiple />
+							<div className="flex gap-2">
+								<>
+									<Button color="success" style={{ color: "white" }} size="sm" onClick={handleUploadClick}>
+										Upload Document
+									</Button>
+									<input type="file" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileChange} multiple />
+								</>
+								<Button color="success" variant="ghost" size="sm" onClick={() => {
+									setIsWebsiteModalOpen(true)
+								}}>
+									Add Website
+								</Button>
+							</div>
+
 
 						</>
 				}
@@ -276,6 +288,30 @@ export default function DocumentsPage() {
 						</TableBody>
 					</Table>
 			}
+
+			<WebsiteModal
+				isOpen={isWebsiteModalOpen}
+				onClose={() => setIsWebsiteModalOpen(false)}
+				onSuccess={async (url) => {
+					setIsWebsiteModalOpen(false)
+
+					const newDocuments = documents.map((file, index) => ({
+						id: -Math.random(), // Temporary negative ID; replace with real ID after upload
+						documentname: url,
+						isUploading: true
+					}));
+
+					setDocuments(currentDocuments => [...currentDocuments, ...newDocuments]);
+
+					const uploadedDocument = await scrapeWebsite(url, selectedFolder?.id)
+
+					setDocuments(currentDocuments =>
+						currentDocuments.map(doc =>
+							doc.documentname === url ? { ...uploadedDocument, isUploading: false } : doc
+						)
+					);
+				}}
+			/>
 
 			<FolderModal
 				isOpen={isFolderModalOpen}

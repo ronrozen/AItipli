@@ -9,8 +9,8 @@ export const siteConfig = {
 			'href': '/settings'
 		},
 		{
-			'label': 'Documents',
-			'href': '/documents'
+			'label': 'Knowledge',
+			'href': '/knowledge'
 		}
 	],
 	navMenuItems: [
@@ -19,8 +19,8 @@ export const siteConfig = {
 			'href': '/settings'
 		},
 		{
-			'label': 'Documents',
-			'href': '/documents'
+			'label': 'Knowledge',
+			'href': '/knowledge'
 		}
 	],
 	links: {
