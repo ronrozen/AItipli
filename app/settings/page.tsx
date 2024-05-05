@@ -39,6 +39,7 @@ export default function SettingsPage() {
     const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
     const [errorModalMessage, setErrorModalMessage] = useState('');
 
+    const [voiceflowId, setVoiceflowId] = useState('');
     const [chatbotId, setChatbotId] = useState('');
     const [openAIKey, setOpenAIKey] = useState('');
     const [model, setModel] = useState('');
@@ -56,7 +57,8 @@ export default function SettingsPage() {
             try {
                 setIsLoading(true)
                 const result = await getChatbot()
-                console.log(result)
+                setVoiceflowId(result.voiceflow_id)
+
                 setChatbotId(result.id)
                 setModel(result.model)
                 setPrompt(result.prompt)
@@ -99,7 +101,7 @@ export default function SettingsPage() {
                     <Button color="success" style={{ color: "white" }} size="sm" onClick={async () => {
                         setIsLoading(true)
                         const result = await createChatbot()
-                        console.log(result[0])
+                        setVoiceflowId(result[0].voiceflow_id)
                         setChatbotId(result[0].id)
                         setModel(result[0].model)
                         setPrompt(result[0].prompt)
@@ -122,6 +124,22 @@ export default function SettingsPage() {
                     <Divider />
                     <Spacer y={4} />
                     <CardBody>
+                        <div className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4">
+                            <Input
+                                isRequired
+                                value={voiceflowId}
+                                onChange={e => {
+                                    setVoiceflowId(e.target.value);
+                                }}
+                                fullWidth
+                                label="Voiceflow ID"
+                                type="text"
+                                size='sm'
+                                radius='lg'
+                                variant="bordered"
+                            />
+                        </div>
+                        <Spacer y={4} />
                         <div className="flex w-full flex-wrap md:flex-nowrap mb-6 md:mb-0 gap-4">
                             <Input
                                 isRequired
@@ -293,7 +311,7 @@ export default function SettingsPage() {
                             onClick={async () => {
                                 try {
                                     setIsLoading(true)
-                                    await updateChatbot(model, prompt, frequencyPenalty, presencePenalty, temperature, openAIKey, matchThreshold, matchCount, knowledgeType)
+                                    await updateChatbot(model, prompt, frequencyPenalty, presencePenalty, temperature, openAIKey, matchThreshold, matchCount, knowledgeType, voiceflowId)
                                     setIsLoading(false)
                                 } catch (e) {
                                     console.log(e)

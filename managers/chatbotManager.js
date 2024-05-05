@@ -25,9 +25,9 @@ export async function getChatbot() {
     }
 }
 
-export async function updateChatbot(model, prompt, frequency_penalty, presence_penalty, temperature, open_ai_key, match_threshold, match_count, doc_type) {
+export async function updateChatbot(model, prompt, frequency_penalty, presence_penalty, temperature, open_ai_key, match_threshold, match_count, doc_type, voiceflow_id) {
     let response = await axios.post(endpoint + "update_chatbot",
-        { model, prompt, frequency_penalty, presence_penalty, temperature, open_ai_key, match_threshold, match_count, doc_type },
+        { model, prompt, frequency_penalty, presence_penalty, temperature, open_ai_key, match_threshold, match_count, doc_type, voiceflow_id },
         { headers: headers });
 
     if (response) {

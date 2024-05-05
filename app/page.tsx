@@ -292,21 +292,21 @@ export default function Home() {
 			<div className="items-center text-center w-full md:w-1/2">
 				<Slider {...settings}>
 					<div className="flex justify-center items-center h-full">
-						<img src="https://placehold.co/400" alt="Placeholder 1" className="m-auto" />
+						<img src="img_1.png" alt="Placeholder 1" className="m-auto" />
 						<h1 className="text-3xl font-bold mt-4">Ask</h1>
 						<p className="mx-auto w-5/6 md:w-3/4 lg:w-2/3 xl:w-1/2">
 							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consequat volutpat odio.
 						</p>
 					</div>
 					<div className="flex justify-center items-center h-full">
-						<img src="https://placehold.co/400" alt="Placeholder 2" className="m-auto" />
+						<img src="img_2.png" alt="Placeholder 2" className="m-auto" />
 						<h1 className="text-3xl font-bold mt-4">Learn</h1>
 						<p className="mx-auto w-5/6 md:w-3/4 lg:w-2/3 xl:w-1/2">
 							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consequat volutpat odio.
 						</p>
 					</div>
 					<div className="flex justify-center items-center h-full">
-						<img src="https://placehold.co/400" alt="Placeholder 3" className="m-auto" />
+						<img src="img_3.png" alt="Placeholder 3" className="m-auto" />
 						<h1 className="text-3xl font-bold mt-4">Improve</h1>
 						<p className="mx-auto w-5/6 md:w-3/4 lg:w-2/3 xl:w-1/2">
 							Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras consequat volutpat odio.

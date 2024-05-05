@@ -1,5 +1,6 @@
 "use client"
 
+import Cookies from 'js-cookie';
 import React, { useState, useEffect } from 'react';
 
 import {
@@ -22,28 +23,46 @@ import clsx from "clsx";
 import { useAuth } from '@/app/auth-context';
 import { ThemeSwitch } from "@/components/theme-switch";
 
+import { getChatbot } from "@/managers/chatbotManager"
+
 const ScriptLoader = () => {
 	useEffect(() => {
-		const script = document.createElement('script');
-		script.onload = function () {
-			window.voiceflow.chat.load({
-				verify: { projectID: '6602a8abe0853d4e25ec3c4c' },
-				url: 'https://general-runtime.voiceflow.com',
-				versionID: 'production',
-				assistant: {
-					color: "green",
-					stylesheet: "chat.css"
-				}
-			});
-		};
-		script.src = 'https://cdn.voiceflow.com/widget/bundle.mjs';
-		script.type = 'text/javascript';
-		document.body.appendChild(script);
+		const fetchData = async () => {
+			try {
+				const result = await getChatbot()
+				const voiceflow_id = result.voiceflow_id
+				console.log("voiceflow_id", voiceflow_id)
 
-		return () => {
-			// Cleanup the script when the component is unmounted
-			document.body.removeChild(script);
-		};
+				const script = document.createElement('script');
+				script.onload = function () {
+					window.voiceflow.chat.load({
+						verify: { projectID: voiceflow_id },
+						url: 'https://general-runtime.voiceflow.com',
+						versionID: 'production',
+						assistant: {
+							color: "green",
+							stylesheet: "chat.css"
+						}
+					});
+				};
+				script.src = 'https://cdn.voiceflow.com/widget/bundle.mjs';
+				script.type = 'text/javascript';
+				document.body.appendChild(script);
+
+				return () => {
+					// Cleanup the script when the component is unmounted
+					document.body.removeChild(script);
+				};
+			} catch (e) {
+				const error = e as any;
+				if (error.response) {
+					console.log(error.response)
+				}
+			}
+		}
+
+		fetchData()
+
 	}, []);
 
 	return null; // This component does not render anything
